@@ -1,0 +1,16 @@
+.{
+    .name = .physics_sim,
+    .version = "0.1.0",
+    .fingerprint = 0x4593ae4ded4f9136,
+    .dependencies = .{
+        .@"raylib-zig" = .{
+            .url = "git+https://github.com/raylib-zig/raylib-zig#devel",
+            .hash = "raylib_zig-5.6.0-dev-KE8REENOBQC-m5nK7M2b5aKSIubJPbPLUYcRhT7aT3RN",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
