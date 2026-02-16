@@ -2,6 +2,7 @@ const rl = @import("raylib");
 const ParticleSim = @import("sims/particles.zig").ParticleSim;
 const OrbitalSim = @import("sims/orbital.zig").OrbitalSim;
 const RigidBodySim = @import("sims/rigid_body.zig").RigidBodySim;
+const RaytracerSim = @import("sims/raytracer.zig").RaytracerSim;
 const Vec2 = @import("core/vec2.zig").Vec2;
 
 const SCREEN_W = 1200;
@@ -12,6 +13,7 @@ const Mode = enum {
     particles,
     orbital,
     rigid_body,
+    raytracer,
 };
 
 pub fn main() !void {
@@ -23,6 +25,8 @@ pub fn main() !void {
     var particle_sim = ParticleSim.init(SCREEN_W, SCREEN_H);
     var orbital_sim = OrbitalSim.init(SCREEN_W, SCREEN_H);
     var rigid_sim = RigidBodySim.init(SCREEN_W, SCREEN_H);
+    var rt_sim = RaytracerSim.init(SCREEN_W, SCREEN_H);
+    defer rt_sim.deinit();
 
     while (!rl.windowShouldClose()) {
         const dt = rl.getFrameTime();
@@ -32,6 +36,7 @@ pub fn main() !void {
                 if (rl.isKeyPressed(.one)) mode = .particles;
                 if (rl.isKeyPressed(.two)) mode = .orbital;
                 if (rl.isKeyPressed(.three)) mode = .rigid_body;
+                if (rl.isKeyPressed(.four)) mode = .raytracer;
             },
             .particles => {
                 // Input
@@ -59,8 +64,14 @@ pub fn main() !void {
             },
             .rigid_body => {
                 if (rl.isKeyPressed(.escape)) mode = .menu;
-
                 rigid_sim.update(dt);
+            },
+            .raytracer => {
+                if (rl.isKeyPressed(.escape)) {
+                    mode = .menu;
+                } else {
+                    rt_sim.update(dt);
+                }
             },
         }
 
@@ -74,6 +85,7 @@ pub fn main() !void {
             .particles => particle_sim.draw(),
             .orbital => orbital_sim.draw(),
             .rigid_body => rigid_sim.draw(),
+            .raytracer => rt_sim.draw(),
         }
     }
 }
@@ -92,6 +104,7 @@ fn drawMenu() void {
         .{ .key = "[1]", .label = "Particle Sandbox", .desc = "Spawn particles, gravity, collisions, bursts" },
         .{ .key = "[2]", .label = "Orbital Mechanics", .desc = "N-body gravity, planetary orbits, fly a rocket" },
         .{ .key = "[3]", .label = "Rigid Body Physics", .desc = "Circles & boxes, collisions, stacking" },
+        .{ .key = "[4]", .label = "Ray Tracer", .desc = "Path-traced global illumination, reflections, soft shadows" },
     };
 
     for (items, 0..) |item, i| {
